@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.h.aazil</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Aazil</name>
+  <summary>Sandboxed Media Viewer</summary>
+  <description>
+    <p>Aazil (عازل) is an isolated media viewer for securely previewing untrusted images and videos inside an OS-level sandbox.</p>
+  </description>
+  <launchable type="desktop-id">com.h.aazil.desktop</launchable>
+  <provides>
+    <binary>aazil</binary>
+  </provides>
+</component>

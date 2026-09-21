@@ -1,0 +1,106 @@
+{
+  "@@locale": "ar",
+  "appName": "عازل",
+  "appSubtitle": "عارض وسائط معزول أمنيًا",
+  "appDescription": "معاينة وتشغيل الصور ومقاطع الفيديو المشبوهة بأمان تام داخل بيئة عزل على مستوى نظام التشغيل. حماية جهازك من استغلال ثغرات الترميز والبرمجيات الخبيثة.",
+  "splashContinue": "متابعة",
+  "selectLanguage": "اختيار اللغة",
+  "languageSubtitle": "اختر لغة واجهة التطبيق المفضلة",
+  "selectTheme": "اختيار المظهر",
+  "themeSubtitle": "اختر مظهر وشكل التطبيق",
+  "darkMode": "الوضع الداكن",
+  "lightMode": "الوضع الفاتح",
+  "homeTitle": "مساحة عمل عازل",
+  "createProject": "إنشاء مشروع جديد",
+  "createProjectDesc": "فتح مجلد أو اختيار ملفات وسائط لمعاينتها بأمان داخل جلسة معزولة.",
+  "settings": "الإعدادات",
+  "settingsDesc": "معاينة خصائص العزل الأمني، حالة بيئة العزل، وتشخيص النظام.",
+  "about": "عن عازل",
+  "sandboxStatus": "محرك العزل الأمني",
+  "sandboxActive": "مفعّل ومفروض بنجاح",
+  "securityGuarantees": "الضمانات الأمنية",
+  "networkDenied": "الاتصال بالشبكة: محظور نهائيًا",
+  "fsRestricted": "نظام الملفات: مقيّد (نسخة معزولة ومؤقتة فقط)",
+  "syscallFilter": "مرشح نداءات النظام: Seccomp-BPF نشط",
+  "processIsolation": "عزل العمليات: عديمة الامتيازات / منخفضة الصلاحية",
+  "recentProjects": "الجلسات الآمنة الأخيرة",
+  "noProjectsYet": "لا توجد مشاريع سابقة. أنشئ جلسة جديدة للبدء.",
+  "openFolder": "فتح مجلد",
+  "selectFiles": "اختيار ملفات وسائط",
+  "mediaFilesCount": "{count, plural, =0{لا توجد ملفات} =1{ملف وسائط واحد} =2{ملفان} other{{count} ملفات وسائط}}",
+  "@mediaFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sandboxedPreview": "معاينة معزولة",
+  "previewLoading": "جاري تهيئة بيئة العزل المغلقة...",
+  "previewRendering": "جاري فك ترميز الوسائط داخل الصندوق المعزول...",
+  "previewCleaning": "جاري إنهاء بيئة العزل ومسح الذاكرة المؤقتة...",
+  "previewReady": "اكتمل العرض المعزول بأمان",
+  "closePreview": "إغلاق وتدمير بيئة العزل",
+  "testSandboxSecurity": "إجراء اختبار التحقق الأمني للعزل",
+  "testResultsTitle": "نتائج اختبارات العزل الأمني",
+  "testPassed": "ناجح (تم حظر التهديد)",
+  "testFailed": "فشل",
+  "networkBlockedTest": "محاولة فتح اتصال بالشبكة",
+  "fsBlockedTest": "محاولة قراءة ملف خارج القائمة البيضاء",
+  "dangerWarning": "بيئة معزولة أمنيًا — يُحظر أي وصول غير مصرّح لنظام المضيف",
+  "fileDetails": "تفاصيل الملف",
+  "fileName": "اسم الملف",
+  "fileSize": "حجم الملف",
+  "fileType": "النوع",
+  "sandboxInfoLabel": "بيئة العزل: {mechanism}",
+  "@sandboxInfoLabel": {
+    "placeholders": {
+      "mechanism": {
+        "type": "String"
+      }
+    }
+  },
+  "selectImages": "اختيار صور متعددة",
+  "selectVideos": "اختيار مقاطع فيديو متعددة",
+  "multiImageViewer": "معرض صور معزول",
+  "multiVideoPlaylist": "قائمة تشغيل فيديو معزولة",
+  "previousImage": "الصورة السابقة",
+  "nextImage": "الصورة التالية",
+  "previousVideo": "الفيديو السابق",
+  "nextVideo": "الفيديو التالي",
+  "play": "تشغيل",
+  "pause": "إيقاف مؤقت",
+  "mute": "كتم الصوت",
+  "unmute": "إلغاء كتم الصوت",
+  "volume": "مستوى الصوت",
+  "repeatMode": "وضع التكرار",
+  "repeatOff": "التكرار: معطّل",
+  "repeatOne": "تكرار: الفيديو الحالي",
+  "repeatAll": "تكرار: كل القائمة",
+  "playlist": "قائمة التشغيل",
+  "imagePosition": "صورة {current} من {total}",
+  "@imagePosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "videoPosition": "فيديو {current} من {total}",
+  "@videoPosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "swipeHint": "اسحب لليمين/اليسار أو استخدم أسهم لوحة المفاتيح للتنقل",
+  "developer": "المطور"
+}
+

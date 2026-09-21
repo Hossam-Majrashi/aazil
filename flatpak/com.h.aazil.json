@@ -1,0 +1,35 @@
+{
+  "app-id": "com.h.aazil",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "24.08",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "aazil",
+  "finish-args": [
+    "--share=ipc",
+    "--socket=fallback-x11",
+    "--socket=wayland",
+    "--socket=x11",
+    "--socket=pulseaudio",
+    "--device=dri",
+    "--filesystem=host",
+    "--filesystem=home"
+  ],
+  "modules": [
+    {
+      "name": "aazil",
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir -p /app/bin /app/lib/aazil /app/share/applications /app/share/pixmaps /app/share/metainfo",
+        "cp -r * /app/lib/aazil/",
+        "ln -s /app/lib/aazil/aazil /app/bin/aazil",
+        "install -D -m 644 com.h.aazil.desktop /app/share/applications/com.h.aazil.desktop",
+        "ln -sf /app/share/applications/com.h.aazil.desktop /app/share/applications/aazil.desktop",
+        "install -D -m 644 com.h.aazil.png /app/share/icons/hicolor/512x512/apps/com.h.aazil.png",
+        "install -D -m 644 com.h.aazil.png /app/share/icons/hicolor/512x512/apps/aazil.png",
+        "install -D -m 644 com.h.aazil.png /app/share/pixmaps/com.h.aazil.png",
+        "install -D -m 644 com.h.aazil.png /app/share/pixmaps/aazil.png",
+        "install -D -m 644 com.h.aazil.metainfo.xml /app/share/metainfo/com.h.aazil.metainfo.xml"
+      ]
+    }
+  ]
+}

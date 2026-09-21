@@ -1,0 +1,106 @@
+{
+  "@@locale": "en",
+  "appName": "Aazil",
+  "appSubtitle": "Sandboxed Media Viewer",
+  "appDescription": "Securely inspect and play untrusted images and videos inside an OS-level isolated sandbox box. Protect your host device from media exploits and malicious payloads.",
+  "splashContinue": "Continue",
+  "selectLanguage": "Select Language",
+  "languageSubtitle": "Choose your preferred language",
+  "selectTheme": "Select Theme",
+  "themeSubtitle": "Choose application appearance",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "homeTitle": "Aazil Workspace",
+  "createProject": "Create Project",
+  "createProjectDesc": "Open a folder or select media files to inspect safely inside an isolated sandbox session.",
+  "settings": "Settings",
+  "settingsDesc": "View isolation parameters, sandbox status, and environment diagnostics.",
+  "about": "About",
+  "sandboxStatus": "Sandbox Engine",
+  "sandboxActive": "Active & Enforced",
+  "securityGuarantees": "Security Guarantees",
+  "networkDenied": "Network Access: DENIED",
+  "fsRestricted": "Filesystem: RESTRICTED (Whitelisted file copy only)",
+  "syscallFilter": "Syscall Filter: SECCOMP-BPF ACTIVE",
+  "processIsolation": "Process Isolation: UNPRIVILEGED / LOW-INTEGRITY",
+  "recentProjects": "Recent Safe Sessions",
+  "noProjectsYet": "No projects opened yet. Create a new safe session to begin.",
+  "openFolder": "Open Folder",
+  "selectFiles": "Select Media Files",
+  "mediaFilesCount": "{count, plural, =0{No media files} =1{1 media file} other{{count} media files}}",
+  "@mediaFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sandboxedPreview": "Sandboxed Preview",
+  "previewLoading": "Initializing isolated sandbox...",
+  "previewRendering": "Decoding media in isolated sandbox...",
+  "previewCleaning": "Terminating sandbox and purging temporary buffers...",
+  "previewReady": "Isolated Render Completed",
+  "closePreview": "Close & Destroy Sandbox",
+  "testSandboxSecurity": "Run Sandbox Security Test",
+  "testResultsTitle": "Isolation Test Results",
+  "testPassed": "PASSED (Threat Blocked)",
+  "testFailed": "FAILED",
+  "networkBlockedTest": "Network Connection Attempt",
+  "fsBlockedTest": "Out-of-whitelist File Read Attempt",
+  "dangerWarning": "Isolated Environment — Zero host access permitted",
+  "fileDetails": "File Details",
+  "fileName": "File Name",
+  "fileSize": "File Size",
+  "fileType": "Type",
+  "sandboxInfoLabel": "Sandbox: {mechanism}",
+  "@sandboxInfoLabel": {
+    "placeholders": {
+      "mechanism": {
+        "type": "String"
+      }
+    }
+  },
+  "selectImages": "Select Images",
+  "selectVideos": "Select Videos",
+  "multiImageViewer": "Sandboxed Image Gallery",
+  "multiVideoPlaylist": "Sandboxed Video Playlist",
+  "previousImage": "Previous Image",
+  "nextImage": "Next Image",
+  "previousVideo": "Previous Video",
+  "nextVideo": "Next Video",
+  "play": "Play",
+  "pause": "Pause",
+  "mute": "Mute",
+  "unmute": "Unmute",
+  "volume": "Volume",
+  "repeatMode": "Repeat Mode",
+  "repeatOff": "Repeat: Off",
+  "repeatOne": "Repeat: Current Video",
+  "repeatAll": "Repeat: All Videos",
+  "playlist": "Playlist",
+  "imagePosition": "Image {current} / {total}",
+  "@imagePosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "videoPosition": "Video {current} / {total}",
+  "@videoPosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "swipeHint": "Swipe left/right or use keyboard arrows to navigate",
+  "developer": "Developer"
+}
+

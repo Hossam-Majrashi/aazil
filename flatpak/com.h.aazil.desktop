@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aazil
+GenericName=Sandboxed Media Viewer
+Comment=Sandboxed Media Viewer (عازل)
+Exec=aazil %U
+Icon=com.h.aazil
+Terminal=false
+StartupNotify=true
+StartupWMClass=com.h.aazil
+Categories=AudioVideo;Graphics;Utility;
