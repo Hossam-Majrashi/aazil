@@ -526,94 +526,125 @@ class _MobileVideoPlayerScreenState extends State<MobileVideoPlayerScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Seek Bar
-                  Row(
-                    children: [
-                      Text(
-                        _formatDuration(_position),
-                        style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
-                      ),
-                      Expanded(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 3,
-                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
-                          ),
-                          child: Slider(
-                            value: _position.inMilliseconds
-                                .clamp(0, _duration.inMilliseconds)
-                                .toDouble() /
-                                1000,
-                            min: 0.0,
-                            max: (_duration.inMilliseconds / 1000).clamp(0.1, double.infinity),
-                            onChanged: (val) => _seekTo(val),
+                  // Seek Bar - Always runs Left-to-Right regardless of ambient locale (Fix video controls #3)
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Row(
+                      children: [
+                        Text(
+                          _formatDuration(_position),
+                          style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
+                        ),
+                        Expanded(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              trackHeight: 3,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
+                            ),
+                            child: Slider(
+                              value: _position.inMilliseconds
+                                  .clamp(0, _duration.inMilliseconds)
+                                  .toDouble() /
+                                  1000,
+                              min: 0.0,
+                              max: (_duration.inMilliseconds / 1000).clamp(0.1, double.infinity),
+                              onChanged: (val) => _seekTo(val),
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        _formatDuration(_duration),
-                        style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
-                      ),
-                    ],
+                        Text(
+                          _formatDuration(_duration),
+                          style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
+                        ),
+                      ],
+                    ),
                   ),
 
-                  // Compact Buttons Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Repeat Mode
-                      IconButton(
-                        iconSize: 20,
-                        icon: Icon(
-                          _repeatMode == VideoRepeatMode.repeatOne
-                              ? Icons.repeat_one
-                              : Icons.repeat,
-                          color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : Colors.grey,
+                  const SizedBox(height: 4),
+
+                  // Compact Buttons Row with Play/Pause centered (Fix video controls #2)
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Row(
+                      children: [
+                        // Left Cluster: Repeat Mode & Volume Trigger
+                        Expanded(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                iconSize: 20,
+                                icon: Icon(
+                                  _repeatMode == VideoRepeatMode.repeatOne
+                                      ? Icons.repeat_one
+                                      : Icons.repeat,
+                                  color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : Colors.grey,
+                                ),
+                                tooltip: _repeatMode.label,
+                                onPressed: _cycleVideoRepeatMode,
+                              ),
+                              IconButton(
+                                iconSize: 20,
+                                icon: Icon(_isMuted || _volume == 0 ? Icons.volume_off : Icons.volume_up),
+                                tooltip: l10n.volume,
+                                onPressed: () => _showVolumeDialog(context, theme, l10n),
+                              ),
+                            ],
+                          ),
                         ),
-                        tooltip: _repeatMode.label,
-                        onPressed: _cycleVideoRepeatMode,
-                      ),
 
-                      // Previous Video
-                      IconButton(
-                        iconSize: 24,
-                        icon: const Icon(Icons.skip_previous),
-                        tooltip: l10n.previousVideo,
-                        onPressed: canPrev ? _goToPreviousVideo : null,
-                      ),
-
-                      // Play / Pause Button with visible high-contrast icon (Bug 2 fix)
-                      IconButton.filled(
-                        iconSize: 26,
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
+                        // Center Cluster: Transport Controls with Play/Pause centered
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              iconSize: 24,
+                              icon: const Icon(Icons.skip_previous),
+                              tooltip: l10n.previousVideo,
+                              onPressed: canPrev ? _goToPreviousVideo : null,
+                            ),
+                            const SizedBox(width: 8),
+                            // Centered Play / Pause Button with visible high-contrast icon
+                            IconButton.filled(
+                              iconSize: 28,
+                              style: IconButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                              ),
+                              icon: Icon(
+                                _isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: theme.colorScheme.onPrimary,
+                                size: 28,
+                              ),
+                              tooltip: _isPlaying ? l10n.pause : l10n.play,
+                              onPressed: _togglePlayPause,
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              iconSize: 24,
+                              icon: const Icon(Icons.skip_next),
+                              tooltip: l10n.nextVideo,
+                              onPressed: canNext ? _advanceToNextVideo : null,
+                            ),
+                          ],
                         ),
-                        icon: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: theme.colorScheme.onPrimary,
-                          size: 26,
+
+                        // Right Cluster: Playlist Bottom Sheet Trigger
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                iconSize: 22,
+                                icon: const Icon(Icons.playlist_play),
+                                tooltip: l10n.playlist,
+                                onPressed: () => _showPlaylistBottomSheet(context, theme, l10n),
+                              ),
+                            ],
+                          ),
                         ),
-                        tooltip: _isPlaying ? l10n.pause : l10n.play,
-                        onPressed: _togglePlayPause,
-                      ),
-
-                      // Next Video
-                      IconButton(
-                        iconSize: 24,
-                        icon: const Icon(Icons.skip_next),
-                        tooltip: l10n.nextVideo,
-                        onPressed: canNext ? _advanceToNextVideo : null,
-                      ),
-
-                      // Volume Dialog Trigger
-                      IconButton(
-                        iconSize: 20,
-                        icon: Icon(_isMuted || _volume == 0 ? Icons.volume_off : Icons.volume_up),
-                        tooltip: l10n.volume,
-                        onPressed: () => _showVolumeDialog(context, theme, l10n),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

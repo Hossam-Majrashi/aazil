@@ -377,12 +377,14 @@ fi
 # Cleanup
 rm -rf "$BUILD_TMP"
 
-# Force-refresh system icon cache
-if command -v gtk-update-icon-cache &> /dev/null; then
-    sudo gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
-fi
-if command -v update-desktop-database &> /dev/null; then
-    sudo update-desktop-database -q /usr/share/applications 2>/dev/null || true
+# Force-refresh system icon cache if running as root
+if [ "$EUID" -eq 0 ]; then
+    if command -v gtk-update-icon-cache &> /dev/null; then
+        gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
+    fi
+    if command -v update-desktop-database &> /dev/null; then
+        update-desktop-database -q /usr/share/applications 2>/dev/null || true
+    fi
 fi
 
 echo -e "\n${GREEN}====================================================${NC}"

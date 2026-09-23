@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:aazil/services/media_resolver.dart';
@@ -36,11 +37,11 @@ void main() {
       if (position > Duration.zero && duration > Duration.zero) break;
     }
 
-    print('Decoded Video Duration: $duration');
-    print('Decoded Video Position: $position');
-    print('Playback active: $isPlaying');
-    print('Video tracks detected: ${videoTracks.length}');
-    print('Audio tracks detected: ${audioTracks.length}');
+    debugPrint('Decoded Video Duration: $duration');
+    debugPrint('Decoded Video Position: $position');
+    debugPrint('Playback active: $isPlaying');
+    debugPrint('Video tracks detected: ${videoTracks.length}');
+    debugPrint('Audio tracks detected: ${audioTracks.length}');
 
     expect(duration.inSeconds, equals(3), reason: 'Decoder must report real 3-second duration');
     expect(position, greaterThanOrEqualTo(Duration.zero));
@@ -50,7 +51,7 @@ void main() {
     // Test seek
     await player.seek(const Duration(seconds: 1));
     await Future.delayed(const Duration(milliseconds: 200));
-    print('Position after seek: ${player.state.position}');
+    debugPrint('Position after seek: ${player.state.position}');
     expect(player.state.position.inSeconds, equals(1));
 
     // Test pause and play
@@ -66,6 +67,6 @@ void main() {
     await tracksSub.cancel();
     await player.dispose();
 
-    print('CONFIRMATION: Real decoded frames and audio track verified!');
+    debugPrint('CONFIRMATION: Real decoded frames and audio track verified!');
   });
 }

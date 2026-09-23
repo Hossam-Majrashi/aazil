@@ -487,11 +487,14 @@ class _DesktopVideoPlayerScreenState extends State<DesktopVideoPlayerScreen> {
                               children: [
                                 const Icon(Icons.playlist_play, size: 20),
                                 const SizedBox(width: 8),
-                                Text(
-                                  l10n.playlist,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                Expanded(
+                                  child: Text(
+                                    l10n.playlist,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
@@ -630,139 +633,182 @@ class _DesktopVideoPlayerScreenState extends State<DesktopVideoPlayerScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Seek Bar
-                  Row(
-                    children: [
-                      Text(
-                        _formatDuration(_position),
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
-                      ),
-                      Expanded(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 4,
-                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                          ),
-                          child: Slider(
-                            value: _position.inMilliseconds
-                                .clamp(0, _duration.inMilliseconds)
-                                .toDouble() /
-                                1000,
-                            min: 0.0,
-                            max: (_duration.inMilliseconds / 1000).clamp(0.1, double.infinity),
-                            onChanged: (val) => _seekTo(val),
+                  // Seek Bar - Always runs Left-to-Right regardless of ambient locale (Fix video controls #3)
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Row(
+                      children: [
+                        Text(
+                          _formatDuration(_position),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
+                        ),
+                        Expanded(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              trackHeight: 4,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                            ),
+                            child: Slider(
+                              value: _position.inMilliseconds
+                                  .clamp(0, _duration.inMilliseconds)
+                                  .toDouble() /
+                                  1000,
+                              min: 0.0,
+                              max: (_duration.inMilliseconds / 1000).clamp(0.1, double.infinity),
+                              onChanged: (val) => _seekTo(val),
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        _formatDuration(_duration),
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
-                      ),
-                    ],
+                        Text(
+                          _formatDuration(_duration),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
+                        ),
+                      ],
+                    ),
                   ),
 
-                  // Bottom Buttons Row
-                  Row(
-                    children: [
-                      // Previous Video Button
-                      IconButton(
-                        icon: const Icon(Icons.skip_previous),
-                        tooltip: l10n.previousVideo,
-                        onPressed: canPrev ? _goToPreviousVideo : null,
-                      ),
-                      // Play / Pause Button with explicit high-contrast icon color (Fix Bug 2)
-                      IconButton.filled(
-                        iconSize: 26,
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
-                        ),
-                        icon: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: theme.colorScheme.onPrimary,
-                          size: 26,
-                        ),
-                        tooltip: _isPlaying ? l10n.pause : l10n.play,
-                        onPressed: _togglePlayPause,
-                      ),
-                      // Next Video Button
-                      IconButton(
-                        icon: const Icon(Icons.skip_next),
-                        tooltip: l10n.nextVideo,
-                        onPressed: canNext ? _advanceToNextVideo : null,
-                      ),
+                  const SizedBox(height: 6),
 
-                      const SizedBox(width: 16),
-
-                      // Volume Control (Mute Toggle + Slider)
-                      IconButton(
-                        icon: Icon(
-                          _isMuted || _volume == 0
-                              ? Icons.volume_off
-                              : (_volume < 0.5 ? Icons.volume_down : Icons.volume_up),
-                        ),
-                        tooltip: _isMuted ? l10n.unmute : l10n.mute,
-                        onPressed: _toggleMute,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 3,
-                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
-                          ),
-                          child: Slider(
-                            value: _volume,
-                            min: 0.0,
-                            max: 1.0,
-                            onChanged: (val) => _setVolume(val),
+                  // Bottom Buttons Row with Play/Pause centered (Fix video controls #2)
+                  Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Row(
+                      children: [
+                        // Left Cluster: Volume Control (Mute Toggle + Slider)
+                        Expanded(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  _isMuted || _volume == 0
+                                      ? Icons.volume_off
+                                      : (_volume < 0.5 ? Icons.volume_down : Icons.volume_up),
+                                ),
+                                tooltip: _isMuted ? l10n.unmute : l10n.mute,
+                                onPressed: _toggleMute,
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                    trackHeight: 3,
+                                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
+                                  ),
+                                  child: Slider(
+                                    value: _volume,
+                                    min: 0.0,
+                                    max: 1.0,
+                                    onChanged: (val) => _setVolume(val),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
 
-                      const Spacer(),
-
-                      // Repeat Mode Toggle Button
-                      OutlinedButton.icon(
-                        icon: Icon(
-                          _repeatMode == VideoRepeatMode.repeatOne
-                              ? Icons.repeat_one
-                              : Icons.repeat,
-                          size: 16,
-                          color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : Colors.grey,
-                        ),
-                        label: Text(
-                          _repeatMode.label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : null,
-                          ),
-                        ),
-                        onPressed: _cycleVideoRepeatMode,
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // Auto-advance indicator
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
+                        // Center Cluster: Transport Controls with Play/Pause in the Horizontal Center
+                        Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.autorenew, size: 14, color: theme.colorScheme.primary),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Auto-advance: On',
-                              style: TextStyle(fontSize: 11, color: theme.colorScheme.primary),
+                            // Previous Video Button
+                            IconButton(
+                              icon: const Icon(Icons.skip_previous),
+                              tooltip: l10n.previousVideo,
+                              onPressed: canPrev ? _goToPreviousVideo : null,
+                            ),
+                            const SizedBox(width: 8),
+                            // Centered Play / Pause Button with explicit high-contrast icon
+                            IconButton.filled(
+                              iconSize: 28,
+                              style: IconButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                              ),
+                              icon: Icon(
+                                _isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: theme.colorScheme.onPrimary,
+                                size: 28,
+                              ),
+                              tooltip: _isPlaying ? l10n.pause : l10n.play,
+                              onPressed: _togglePlayPause,
+                            ),
+                            const SizedBox(width: 8),
+                            // Next Video Button
+                            IconButton(
+                              icon: const Icon(Icons.skip_next),
+                              tooltip: l10n.nextVideo,
+                              onPressed: canNext ? _advanceToNextVideo : null,
                             ),
                           ],
                         ),
-                      ),
-                    ],
+
+                        // Right Cluster: Repeat Mode Toggle + Auto-advance + Playlist Toggle
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Repeat Mode Toggle Button
+                              OutlinedButton.icon(
+                                icon: Icon(
+                                  _repeatMode == VideoRepeatMode.repeatOne
+                                      ? Icons.repeat_one
+                                      : Icons.repeat,
+                                  size: 16,
+                                  color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : Colors.grey,
+                                ),
+                                label: Text(
+                                  _repeatMode.label,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: _repeatMode != VideoRepeatMode.off ? theme.colorScheme.primary : null,
+                                  ),
+                                ),
+                                onPressed: _cycleVideoRepeatMode,
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // Auto-advance indicator
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.autorenew, size: 14, color: theme.colorScheme.primary),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Auto',
+                                      style: TextStyle(fontSize: 11, color: theme.colorScheme.primary),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // Playlist Panel Toggle
+                              IconButton(
+                                icon: Icon(
+                                  _isPlaylistPanelVisible ? Icons.playlist_play : Icons.playlist_remove,
+                                  color: _isPlaylistPanelVisible ? theme.colorScheme.primary : null,
+                                ),
+                                tooltip: l10n.playlist,
+                                onPressed: () {
+                                  setState(() {
+                                    _isPlaylistPanelVisible = !_isPlaylistPanelVisible;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

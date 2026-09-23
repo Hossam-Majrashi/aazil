@@ -14,7 +14,7 @@
 
 ---
 
-## 🇸🇦 عازل - عارض وسائط معزول أمنيًا
+## عازل - عارض وسائط معزول أمنيًا
 
 تطبيق **عازل** هو بيئة عمل آمنة لمعاينة وتشغيل الصور ومقاطع الفيديو المشبوهة أو غير الموثوقة بأمان تام داخل بيئة عزل صارمة (Sandbox) على مستوى نظام التشغيل، لحماية جهاز المضيف من استغلال ثغرات برامج فك الترميز (Media Codecs) والبرمجيات الخبيثة.
 
@@ -97,7 +97,7 @@
 
 <br/>
 
-## 🇬🇧 Aazil - Sandboxed Media Viewer
+## Aazil - Sandboxed Media Viewer
 
 **Aazil** (عازل) is a secure, sandboxed media workspace designed to inspect and play untrusted or suspicious images and videos safely inside an OS-level isolated sandbox. It protects your host machine against malicious payloads, parser vulnerabilities, and codec exploitation.
 

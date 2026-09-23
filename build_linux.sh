@@ -417,7 +417,7 @@ EOF
 
     if command -v rpmbuild &> /dev/null; then
         RPM_BUILD_DIR="$BUILD_TMP/rpmbuild"
-        mkdir -p "$RPM_BUILD_DIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+        mkdir -p "$RPM_BUILD_DIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS,rpmdb}
         cat << EOF > "$RPM_BUILD_DIR/SPECS/$APP_NAME.spec"
 Name:           $APP_NAME
 Version:        $VERSION
@@ -462,7 +462,7 @@ fi
 /usr/share/pixmaps/*
 EOF
 
-        rpmbuild --define "_topdir $RPM_BUILD_DIR" -bb "$RPM_BUILD_DIR/SPECS/$APP_NAME.spec" > /dev/null
+        rpmbuild --define "_topdir $RPM_BUILD_DIR" --define "_dbpath $RPM_BUILD_DIR/rpmdb" -bb "$RPM_BUILD_DIR/SPECS/$APP_NAME.spec" > /dev/null 2>&1
         find "$RPM_BUILD_DIR/RPMS" -name "*.rpm" -exec cp {} "$DIST_DIR/$RPM_NAME" \;
         echo -e "${GREEN}✓ Created $DIST_DIR/$RPM_NAME${NC}"
     elif command -v fpm &> /dev/null; then
@@ -574,7 +574,6 @@ packager = $APP_NAME Packager
 size = $SIZE
 arch = x86_64
 license = MIT
-install = .INSTALL
 EOF
 
     if command -v bsdtar &> /dev/null && command -v zstd &> /dev/null; then
@@ -992,12 +991,14 @@ fi
 # Cleanup
 rm -rf "$BUILD_TMP"
 
-# Force-refresh system icon cache after packaging
-if command -v gtk-update-icon-cache &> /dev/null; then
-    sudo gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
-fi
-if command -v update-desktop-database &> /dev/null; then
-    sudo update-desktop-database -q /usr/share/applications 2>/dev/null || true
+# Refresh icon cache if running as root or without prompting
+if [ "$EUID" -eq 0 ]; then
+    if command -v gtk-update-icon-cache &> /dev/null; then
+        gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
+    fi
+    if command -v update-desktop-database &> /dev/null; then
+        update-desktop-database -q /usr/share/applications 2>/dev/null || true
+    fi
 fi
 
 echo -e "\n${GREEN}====================================================${NC}"

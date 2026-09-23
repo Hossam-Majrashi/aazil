@@ -76,9 +76,33 @@ class MediaMetadataReader {
             'status': 'success',
           };
         }
+
+        // 4. Try FLV parser
+        final flvDuration = _parseFlvDuration(headerBytes);
+        if (flvDuration != null && flvDuration > 0) {
+          return {
+            'duration_seconds': flvDuration.round(),
+            'duration_ms': (flvDuration * 1000).round(),
+            'duration_exact': flvDuration,
+            'container': 'flv',
+            'status': 'success',
+          };
+        }
+
+        // 5. Try WMV / ASF parser
+        final wmvDuration = _parseWmvDuration(headerBytes);
+        if (wmvDuration != null && wmvDuration > 0) {
+          return {
+            'duration_seconds': wmvDuration.round(),
+            'duration_ms': (wmvDuration * 1000).round(),
+            'duration_exact': wmvDuration,
+            'container': 'wmv',
+            'status': 'success',
+          };
+        }
       }
 
-      // 4. Host ffprobe fallback if available
+      // 6. Host ffprobe fallback if available
       final probeDuration = await _tryFfprobe(filePath);
       if (probeDuration != null && probeDuration > 0) {
         return {
@@ -245,6 +269,88 @@ class MediaMetadataReader {
       }
     }
 
+    return null;
+  }
+
+  /// Parses Flash Video (FLV) metadata tag duration.
+  double? _parseFlvDuration(Uint8List data) {
+    if (data.length < 9) return null;
+    // FLV signature: 'FLV'
+    if (data[0] != 0x46 || data[1] != 0x4C || data[2] != 0x56) {
+      return null;
+    }
+
+    // Search for ASCII 'duration' in script tag
+    final target = [0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E]; // 'duration'
+    for (int i = 0; i <= data.length - target.length - 9; i++) {
+      bool match = true;
+      for (int j = 0; j < target.length; j++) {
+        if (data[i + j] != target[j]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) {
+        // Next byte is type (0x00 for AMF0 Number - 8 bytes double big-endian)
+        final typePos = i + target.length;
+        if (data[typePos] == 0x00 && typePos + 9 <= data.length) {
+          final bdata = ByteData.sublistView(data, typePos + 1, typePos + 9);
+          final dur = bdata.getFloat64(0, Endian.big);
+          if (dur > 0 && !dur.isNaN && !dur.isInfinite) {
+            return dur;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Parses ASF / WMV File Properties Object PlayDuration.
+  double? _parseWmvDuration(Uint8List data) {
+    if (data.length < 30) return null;
+    // ASF Header Object GUID: 75B22630-668E-11CF-A6D9-00AA0062CE6C
+    // Byte sequence: 30 26 B2 75 8E 66 CF 11 A6 D9 00 AA 00 62 CE 6C
+    if (data[0] != 0x30 || data[1] != 0x26 || data[2] != 0xB2 || data[3] != 0x75) {
+      return null;
+    }
+
+    // Search for File Properties Object GUID:
+    // A1 DC AB 8C 47 A9 CF 11 8E E4 00 C0 0C 20 53 65
+    final fpropGuid = [
+      0xA1, 0xDC, 0xAB, 0x8C, 0x47, 0xA9, 0xCF, 0x11,
+      0x8E, 0xE4, 0x00, 0xC0, 0x0C, 0x20, 0x53, 0x65,
+    ];
+
+    for (int i = 0; i <= data.length - fpropGuid.length - 72; i++) {
+      bool match = true;
+      for (int j = 0; j < fpropGuid.length; j++) {
+        if (data[i + j] != fpropGuid[j]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) {
+        // In File Properties Object:
+        // GUID: 16 bytes (offset 0)
+        // Object Size: 8 bytes (offset 16)
+        // File ID: 16 bytes (offset 24)
+        // File Size: 8 bytes (offset 40)
+        // Creation Date: 8 bytes (offset 48)
+        // Data Packets Count: 8 bytes (offset 56)
+        // Play Duration: 8 bytes (offset 64 from object start, in 100-nanoseconds)
+        final playDurOffset = i + 64;
+        if (playDurOffset + 8 <= data.length) {
+          final bdata = ByteData.sublistView(data, playDurOffset, playDurOffset + 8);
+          final ticks = bdata.getUint64(0, Endian.little);
+          if (ticks > 0) {
+            final durSec = ticks / 10000000.0;
+            if (durSec > 0 && !durSec.isNaN && !durSec.isInfinite) {
+              return durSec;
+            }
+          }
+        }
+      }
+    }
     return null;
   }
 

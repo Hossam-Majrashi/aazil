@@ -39,13 +39,14 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "testIsolation" -> {
-                    if (sandboxService == null) {
+                    val service = sandboxService
+                    if (service == null) {
                         result.error("SERVICE_UNAVAILABLE", "Isolated sandbox service not bound", null)
                         return@setMethodCallHandler
                     }
                     try {
-                        val netBlocked = sandboxService!!.verifyNetworkBlocked()
-                        val fsBlocked = sandboxService!!.verifyFilesystemBlocked()
+                        val netBlocked = service.verifyNetworkBlocked()
+                        val fsBlocked = service.verifyFilesystemBlocked()
                         val map = mapOf(
                             "platform" to "android",
                             "sandbox_mechanism" to "Android isolatedProcess (:sandbox) + Binder/AIDL",
@@ -61,14 +62,15 @@ class MainActivity : FlutterActivity() {
                 }
                 "inspectMedia" -> {
                     val filePath = call.argument<String>("filePath")
-                    if (filePath == null || sandboxService == null) {
+                    val service = sandboxService
+                    if (filePath == null || service == null) {
                         result.error("INVALID_ARGS", "Missing filePath or service unavailable", null)
                         return@setMethodCallHandler
                     }
                     try {
                         val file = File(filePath)
                         val pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-                        val jsonStr = sandboxService!!.inspectMediaFd(pfd)
+                        val jsonStr = service.inspectMediaFd(pfd)
                         result.success(jsonStr)
                     } catch (e: Exception) {
                         result.error("INSPECT_ERROR", e.message, null)

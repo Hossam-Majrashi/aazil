@@ -17,7 +17,7 @@ void main() async {
 class AazilApp extends StatefulWidget {
   final bool onboardingComplete;
 
-  const AazilApp({super.key, required this.onboardingComplete});
+  const AazilApp({super.key, this.onboardingComplete = false});
 
   @override
   State<AazilApp> createState() => _AazilAppState();

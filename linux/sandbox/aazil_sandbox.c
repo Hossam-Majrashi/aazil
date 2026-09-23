@@ -204,6 +204,18 @@ static void safe_inspect_media(const char *filepath, char *out_type, size_t type
     else if (buf[0] == 0x1A && buf[1] == 0x45 && buf[2] == 0xDF && buf[3] == 0xA3) {
         strncpy(out_type, "video/webm", type_size);
     }
+    // AVI
+    else if (n >= 12 && memcmp(buf, "RIFF", 4) == 0 && memcmp(buf + 8, "AVI ", 4) == 0) {
+        strncpy(out_type, "video/x-msvideo", type_size);
+    }
+    // FLV
+    else if (buf[0] == 'F' && buf[1] == 'L' && buf[2] == 'V') {
+        strncpy(out_type, "video/x-flv", type_size);
+    }
+    // WMV / ASF
+    else if (buf[0] == 0x30 && buf[1] == 0x26 && (unsigned char)buf[2] == 0xB2 && buf[3] == 0x75) {
+        strncpy(out_type, "video/x-ms-wmv", type_size);
+    }
     else {
         strncpy(out_type, "application/octet-stream", type_size);
     }

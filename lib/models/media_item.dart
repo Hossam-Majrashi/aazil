@@ -45,6 +45,11 @@ class MediaItem {
         lower.endsWith('.webm') ||
         lower.endsWith('.mov') ||
         lower.endsWith('.avi') ||
+        lower.endsWith('.flv') ||
+        lower.endsWith('.wmv') ||
+        lower.endsWith('.m4v') ||
+        lower.endsWith('.ts') ||
+        lower.endsWith('.3gp') ||
         mime.startsWith('video/')) {
       return MediaType.video;
     }

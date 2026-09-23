@@ -203,7 +203,7 @@ class ProjectManager extends ChangeNotifier {
     try {
       final files = await FilePicker.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['mp4', 'mkv', 'avi', 'mov', 'webm'],
+        allowedExtensions: ['mp4', 'mkv', 'avi', 'mov', 'webm', 'flv', 'wmv', 'm4v', 'ts', '3gp'],
       );
       if (files.isEmpty) return [];
 

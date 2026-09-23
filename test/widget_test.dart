@@ -177,4 +177,149 @@ void main() {
     final iconWidget = tester.widget<Icon>(pauseIconFinder);
     expect(iconWidget.color, equals(AppTheme.darkTheme.colorScheme.onPrimary));
   });
+
+  test('Video Controls Update #1: Multi-format video detection supports MP4, MKV, AVI, MOV, WebM, FLV, WMV', () {
+    final formats = ['test.mp4', 'test.mkv', 'test.avi', 'test.mov', 'test.webm', 'test.flv', 'test.wmv', 'test.m4v', 'test.ts', 'test.3gp'];
+    for (final f in formats) {
+      expect(MediaItem.detectType(f), equals(MediaType.video), reason: 'Format $f must be detected as video');
+    }
+  });
+
+  testWidgets('Video Controls Update #2 & #3: Play/Pause button is centered and Seek Bar is LTR in RTL locale (Desktop)', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final video = MediaItem(
+      id: 'v1',
+      path: 'assets/samples/sample_video_1.mp4',
+      name: 'sample_video_1.mp4',
+      size: 32235,
+      type: MediaType.video,
+      mimeType: 'video/mp4',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ar'),
+        theme: AppTheme.darkTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: DesktopVideoPlayerScreen(
+          videos: [video],
+          initialIndex: 0,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Find play/pause button
+    final pauseFinder = find.byIcon(Icons.pause);
+    expect(pauseFinder, findsOneWidget);
+    final centerPos = tester.getCenter(pauseFinder);
+
+    // Screen center X is 640 (1280 / 2)
+    expect((centerPos.dx - 640.0).abs(), lessThan(70.0));
+
+    // Verify Seek Bar Slider has LTR Directionality
+    final sliderFinder = find.byType(Slider).first;
+    final ltrAncestor = tester.widget<Directionality>(
+      find.ancestor(of: sliderFinder, matching: find.byType(Directionality)).first,
+    );
+    expect(ltrAncestor.textDirection, equals(TextDirection.ltr));
+  });
+
+  testWidgets('Video Controls Update #2 & #3: Play/Pause button is centered and Seek Bar is LTR in RTL locale (Mobile)', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final video = MediaItem(
+      id: 'v1',
+      path: 'assets/samples/sample_video_1.mp4',
+      name: 'sample_video_1.mp4',
+      size: 32235,
+      type: MediaType.video,
+      mimeType: 'video/mp4',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ar'),
+        theme: AppTheme.darkTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MobileVideoPlayerScreen(
+          videos: [video],
+          initialIndex: 0,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Find play/pause button
+    final pauseFinder = find.byIcon(Icons.pause);
+    expect(pauseFinder, findsOneWidget);
+    final centerPos = tester.getCenter(pauseFinder);
+
+    // Screen center X is 200 (400 / 2)
+    expect((centerPos.dx - 200.0).abs(), lessThan(50.0));
+
+    // Verify Seek Bar Slider has LTR Directionality
+    final sliderFinder = find.byType(Slider).first;
+    final ltrAncestor = tester.widget<Directionality>(
+      find.ancestor(of: sliderFinder, matching: find.byType(Directionality)).first,
+    );
+    expect(ltrAncestor.textDirection, equals(TextDirection.ltr));
+  });
+
+  testWidgets('Video Controls Update #2 & #3: Play/Pause button is centered and Seek Bar is LTR in RTL locale (Web)', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1024, 768);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final video = MediaItem(
+      id: 'v1',
+      path: 'assets/samples/sample_video_1.mp4',
+      name: 'sample_video_1.mp4',
+      size: 32235,
+      type: MediaType.video,
+      mimeType: 'video/mp4',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ar'),
+        theme: AppTheme.darkTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: WebVideoPlayerScreen(
+          videos: [video],
+          initialIndex: 0,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Find play/pause button
+    final pauseFinder = find.byIcon(Icons.pause);
+    expect(pauseFinder, findsOneWidget);
+    final centerPos = tester.getCenter(pauseFinder);
+
+    // Screen center X is 512 (1024 / 2)
+    expect((centerPos.dx - 512.0).abs(), lessThan(70.0));
+
+    // Verify Seek Bar Slider has LTR Directionality
+    final sliderFinder = find.byType(Slider).first;
+    final ltrAncestor = tester.widget<Directionality>(
+      find.ancestor(of: sliderFinder, matching: find.byType(Directionality)).first,
+    );
+    expect(ltrAncestor.textDirection, equals(TextDirection.ltr));
+  });
 }

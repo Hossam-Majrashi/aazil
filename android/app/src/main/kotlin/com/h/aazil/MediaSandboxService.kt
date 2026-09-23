@@ -31,6 +31,10 @@ class MediaSandboxService : Service() {
                     readBytes >= 3 && header[0] == 0xFF.toByte() && header[1] == 0xD8.toByte() -> "image/jpeg"
                     readBytes >= 4 && header[0] == 'G'.code.toByte() && header[1] == 'I'.code.toByte() -> "image/gif"
                     readBytes >= 12 && String(header, 0, 4) == "RIFF" && String(header, 8, 4) == "WEBP" -> "image/webp"
+                    readBytes >= 12 && String(header, 0, 4) == "RIFF" && String(header, 8, 4) == "AVI " -> "video/x-msvideo"
+                    readBytes >= 4 && header[0] == 0x1A.toByte() && header[1] == 0x45.toByte() && header[2] == 0xDF.toByte() && header[3] == 0xA3.toByte() -> "video/x-matroska"
+                    readBytes >= 3 && header[0] == 'F'.code.toByte() && header[1] == 'L'.code.toByte() && header[2] == 'V'.code.toByte() -> "video/x-flv"
+                    readBytes >= 16 && (header[0] == 0x30.toByte() && header[1] == 0x26.toByte() && header[2] == 0xB2.toByte() && header[3] == 0x75.toByte()) -> "video/x-ms-wmv"
                     readBytes >= 8 && (String(header, 4, 4) == "ftyp" || String(header, 4, 4) == "moov") -> "video/mp4"
                     else -> "application/octet-stream"
                 }
@@ -41,7 +45,7 @@ class MediaSandboxService : Service() {
             } finally {
                 try {
                     pfd.close()
-                } catch (_: Exception) {}
+                } catch (e: Exception) {}
             }
             return response.toString()
         }
@@ -54,7 +58,7 @@ class MediaSandboxService : Service() {
                 socket.connect(InetSocketAddress("1.1.1.1", 53), 1000)
                 socket.close()
                 false // Succeeded => NOT blocked
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 true // Exception => successfully blocked!
             }
         }
@@ -64,7 +68,7 @@ class MediaSandboxService : Service() {
                 // isolatedProcess runs under isolated_app SELinux domain and cannot read host/app files
                 val forbidden = File("/data/system/packages.xml")
                 !forbidden.canRead()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 true // successfully blocked!
             }
         }

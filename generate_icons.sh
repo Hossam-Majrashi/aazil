@@ -211,18 +211,18 @@ if [ -d "$HOME/.local/share/icons/hicolor" ] && command -v gtk-update-icon-cache
     gtk-update-icon-cache -q -t -f "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
 fi
 
-# Force-refresh system-wide icon cache (requires permission)
-if command -v gtk-update-icon-cache &> /dev/null; then
-    sudo gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
+# Force-refresh system-wide icon cache if writable
+if command -v gtk-update-icon-cache &> /dev/null && [ -w /usr/share/icons/hicolor ]; then
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null || true
 fi
-if command -v update-desktop-database &> /dev/null; then
-    sudo update-desktop-database -q /usr/share/applications 2>/dev/null || true
+if command -v update-desktop-database &> /dev/null && [ -w /usr/share/applications ]; then
+    update-desktop-database -q /usr/share/applications 2>/dev/null || true
 fi
 
-# Also update system pixmaps if they exist
-if [ -d "/usr/share/pixmaps" ]; then
-    sudo cp "$OUT_DIR/export_512x512.png" "/usr/share/pixmaps/${APP_NAME:-aazil}.png" 2>/dev/null || true
-    sudo cp "$OUT_DIR/export_512x512.png" "/usr/share/pixmaps/com.h.aazil.png" 2>/dev/null || true
+# Also update system pixmaps if writable
+if [ -d "/usr/share/pixmaps" ] && [ -w "/usr/share/pixmaps" ]; then
+    cp "$OUT_DIR/export_512x512.png" "/usr/share/pixmaps/${APP_NAME:-aazil}.png" 2>/dev/null || true
+    cp "$OUT_DIR/export_512x512.png" "/usr/share/pixmaps/com.h.aazil.png" 2>/dev/null || true
 fi
 
 echo -e "\n${GREEN}====================================================${NC}"
